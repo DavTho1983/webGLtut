@@ -1,15 +1,10 @@
 import GLC from '../GLCommander/index'
+import ModelRenderer from '../Render/ModelRenderer'
+import ModelType from  '../Models/ModelType'
+import ModelInstance from '../Models/ModelInstance'
 
 export default function Init (id) {
     const canvas = document.querySelector(`#${id}`)
-
-    let r = 0
-
-    const render = () => {
-        GLC.clear(r, 0.0, 0.0, 1.0)
-        r += 0.001
-        window.requestAnimationFrame(render)
-    }
 
     if (!canvas) {
         return
@@ -22,6 +17,26 @@ export default function Init (id) {
     }
 
     GLC.init(gl)
+
+    const vertices = [
+        0.0, 0.5, 0.0,
+        -0.5, -0.5, 0.0,
+        0.5, -0.5, 0.0
+    ]
+
+    const indices = [ 0, 1, 2 ]
+
+    const modelRender = new ModelRenderer()
+    modelRender.registerNewModel(new ModelType(vertices, indices), 'triangle')
+    const instance = new ModelInstance(0, 0, 0, 0, 0, 0, 1)
+    modelRender.addInstance(instance, 'triangle')
+
+    const render = () => {
+        GLC.clear(1.0, 1.0, 1.0, 1.0)
+        instance.updateRotation(1, 1, 1)
+        modelRender.render()
+        window.requestAnimationFrame(render)
+    }
+
     window.requestAnimationFrame(render)
-    
 }
